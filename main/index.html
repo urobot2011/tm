@@ -24,9 +24,28 @@
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
     // the link to your model provided by Teachable Machine export panel
-    const URL = "https://teachablemachine.withgoogle.com/models/56Mb-WpJt/";
+    //const URL = "https://teachablemachine.withgoogle.com/models/56Mb-WpJt/";
+	const URL = "https://storage.googleapis.com/tm-model/56Mb-WpJt/";
+	var model, cam, labelContainer, maxPredictions;
+    var fileInput = document.getElementById("fileInput");
+    fileInput.addEventListener('change',function(e){
+    var file = e.target.files[0]; //선택된 파일
+    var reader = new FileReader();
+    reader.readAsDataURL(file); //파일을 읽는 메서드 
 
-    let model, webcam, labelContainer, maxPredictions;
+    reader.onload = function(){
+      /*var photoFrame = document.createElement("div");
+      photoFrame.style = `background : url(${reader.result}); background-size : cover`;
+      photoFrame.className = "photoFrame";
+      document.getElementById("pictures").appendChild(photoFrame);
+      e.target.value = "";
+
+      photoFrame.addEventListener("click",function(){
+        document.getElementById("pictures").removeChild(photoFrame);
+      })*/
+	  cam = reader.result;
+    }
+    })
 
     // Load the image model and setup the webcam
     async function init() {
@@ -49,7 +68,12 @@
 
         // append elements to the DOM
         //document.getElementById("webcam-container").appendChild(webcam.canvas);
-        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        //document.getElementById("webcam-container").appendChild(cam);
+		var photoFrame = document.createElement("div");
+        photoFrame.style = `background : url(${cam}); background-size : cover`;
+        photoFrame.className = "photoFrame";
+        document.getElementById("pictures").appendChild(photoFrame);
+        e.target.value = "";
         labelContainer = document.getElementById("label-container");
         for (let i = 0; i < maxPredictions; i++) { // and class labels
             labelContainer.appendChild(document.createElement("div"));
@@ -66,7 +90,7 @@
     async function predict() {
         // predict can take in an image, video or canvas html element
         //const prediction = await model.predict(webcam.canvas);
-        const prediction = await model.predict(webcam.canvas);
+        const prediction = await model.predict(cam);
         for (let i = 0; i < maxPredictions; i++) {
             const classPrediction =
                 prediction[i].className + ": " + prediction[i].probability.toFixed(2);
@@ -74,24 +98,7 @@
         }
     }
  
-      var fileInput = document.getElementById("fileInput");
-      fileInput.addEventListener('change',function(e){
-    var file = e.target.files[0]; //선택된 파일
-    var reader = new FileReader();
-    reader.readAsDataURL(file); //파일을 읽는 메서드 
-
-    reader.onload = function(){
-      var photoFrame = document.createElement("div");
-      photoFrame.style = `background : url(${reader.result}); background-size : cover`;
-      photoFrame.className = "photoFrame";
-      document.getElementById("pictures").appendChild(photoFrame);
-      e.target.value = "";
-
-      photoFrame.addEventListener("click",function(){
-        document.getElementById("pictures").removeChild(photoFrame);
-      })
-    }
-  })
+      
 </script>
  </body>
 </html>
