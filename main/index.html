@@ -13,6 +13,10 @@
 <button type="button" onclick="init()">Start</button>
 <div id="webcam-container"></div>
 <div id="label-container"></div>
+  <input type="file" id="fileInput"/>
+  <div id="pictures">
+
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 <script type="text/javascript">
@@ -53,7 +57,25 @@
     }
 
     async function loop() {
+      var fileInput = document.getElementById("fileInput");
         //webcam.update(); // update the webcam frame
+     fileInput.addEventListener('change',function(e){
+    var file = e.target.files[0]; //선택된 파일
+    var reader = new FileReader();
+    reader.readAsDataURL(file); //파일을 읽는 메서드 
+
+    reader.onload = function(){
+      var photoFrame = document.createElement("div");
+      photoFrame.style = `background : url(${reader.result}); background-size : cover`;
+      photoFrame.className = "photoFrame";
+      document.getElementById("pictures").appendChild(photoFrame);
+      e.target.value = "";
+
+      photoFrame.addEventListener("click",function(){
+        document.getElementById("pictures").removeChild(photoFrame);
+      })
+    }
+  })
         await predict();
         window.requestAnimationFrame(loop);
     }
